@@ -13,35 +13,37 @@
       <p>فرصتك للعمل بالخارج تبدأ من هنا نوفر لك فرص عمل مميزة في الخارج، مع دعمك في جميع خطوات التقديم والتوظيف وإجراءات السفر</p>
       <h1>تسجيل الدخول</h1>
       
+      <!-- بداية النموذج -->
       <form id="loginForm" autocomplete="off">
         <label for="profilePhoto">الصورة الشخصية</label>
-        <input type="file" id="profilePhoto" name="profilePhoto" accept=".jpg,.jpeg,image/jpeg">
+        <input type="file" id="profilePhoto" accept="image/*">
 
         <label for="fullName">الاسم ثلاثي</label>
-        <input id="fullName" name="fullName" type="text" placeholder="أحمد محمد أحمد" required>
+        <input id="fullName" type="text" placeholder="أحمد محمد أحمد" required>
 
         <label for="age">السن</label>
-        <input id="age" name="age" type="number" placeholder="18" required>
+        <input id="age" type="text" placeholder="18" required>
 
         <label for="country">الدولة</label>
-        <input id="country" name="country" type="text" placeholder="مصر" required>
+        <input id="country" type="text" placeholder="مصر" required>
 
         <label for="gov">المحافظة</label>
-        <input id="gov" name="gov" type="text" placeholder="القاهرة" required>
+        <input id="gov" type="text" placeholder="القاهرة" required>
 
         <label for="address">العنوان التفصيلي</label>
-        <input id="address" name="address" type="text" placeholder="القاهرة - شارع .... - عمارة رقم.." required>
+        <input id="address" type="text" placeholder="القاهرة - شارع .... - عمارة رقم.." required>
 
         <label for="job">الوظيفة</label>
-        <input id="job" name="job" type="text" placeholder="عامل" required>
+        <input id="job" type="text" placeholder="عامل" required>
 
         <label for="nationality">الجنسية</label>
-        <input id="nationality" name="nationality" type="text" placeholder="مصري" required>
+        <input id="nationality" type="text" placeholder="مصري" required>
 
         <label for="email">الايميل</label>
-        <input id="email" name="email" type="email" placeholder="test.user@example.com" required>
+        <input id="email" type="email" placeholder="test.user@example.com" required>
 
-        <button type="submit" style="margin-top: 15px;">تسجيل الدخول</button>
+        <!-- وضعنا الزر داخل النموذج ليعمل التسجيل بشكل صحيح -->
+        <button type="submit" id="submitBtn" style="margin-top: 20px; width: 100%; padding: 12px; cursor: pointer;">تسجيل الدخول</button>
       </form>
 
       <div id="result" class="result" hidden></div>
@@ -49,11 +51,15 @@
   </main>
 
   <script>
-    // ضع رابط API الخاص بشيت جوجل هنا (مثل SheetBest أو Google Apps Script Web App)
+    // ضع رابط الـ Connection URL المأخوذ من SheetBest بين التنصيص
     const GOOGLE_SHEET_API_URL = "https://api.sheetbest.com/sheets/a08b3225-92a8-407f-8463-b6dfd60036fa";
 
     document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
+
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.innerText = "جاري الإرسال...";
 
       const formData = {
         "الاسم ثلاثي": document.getElementById("fullName").value,
@@ -66,19 +72,23 @@
         "الايميل": document.getElementById("email").value
       };
 
-      // سطر إرسال البيانات مباشرة إلى Google Sheet
       fetch(GOOGLE_SHEET_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify([formData])
       })
-      .then(response => {
-        alert("تم إرسال البيانات بنجاح إلى Google Sheets!");
+      .then(response => response.json())
+      .then(data => {
+        alert("تم إرسال البيانات وتسجيلها بنجاح!");
         document.getElementById("loginForm").reset();
       })
       .catch(error => {
-        alert("حدث خطأ أثناء الإرسال!");
+        alert("حدث خطأ أثناء الإرسال، تأكد من رابط SheetBest والاتصال بالإنترنت.");
         console.error("Error:", error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "تسجيل الدخول";
       });
     });
   </script>

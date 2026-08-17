@@ -48,8 +48,7 @@
   </main>
 
   <script>
-    // ضع هنا رابط Web app الذي نسخته من Apps Script
-    const SCRIPT_URL = "ضع_رابط_WEB_APP_هنا";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHZKIn350bP72mM8MktILDOVWV8vAWUElkaoNzCUji1xc2HBAr-0CArfMrLuKb50eT1A/exec";
 
     document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
@@ -86,26 +85,26 @@
           fileData: base64Data
         };
 
-           fetch("https://script.google.com/macros/s/AKfycbzHZKIn350bP72mM8MktILDOVWV8vAWUElkaoNzCUji1xc2HBAr-0CArfMrLuKb50eT1A/exec", {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      alert("تم إرسال البيانات ورفع الصورة بنجاح!");
-      document.getElementById("loginForm").reset();
-    })
-    .catch(err => {
-      alert("حدث خطأ في الاتصال بالسيرفر.");
-      console.error(err);
-    })
-    .finally(() => {
-      submitBtn.disabled = false;
-      submitBtn.innerText = "تسجيل الدخول";
-    });
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        })
+        .then(() => {
+          alert("تم إرسال البيانات ورفع الصورة بنجاح!");
+          document.getElementById("loginForm").reset();
+        })
+        .catch(err => {
+          alert("حدث خطأ في الاتصال بالسيرفر.");
+          console.error(err);
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerText = "تسجيل الدخول";
+        });
       };
 
       reader.readAsDataURL(file);

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <title>GoHire</title>
 </head>
 <body>
 
@@ -13,10 +14,9 @@
       <p>فرصتك للعمل بالخارج تبدأ من هنا نوفر لك فرص عمل مميزة في الخارج، مع دعمك في جميع خطوات التقديم والتوظيف وإجراءات السفر</p>
       <h1>تسجيل الدخول</h1>
       
-      <!-- بداية النموذج -->
       <form id="loginForm" autocomplete="off">
         <label for="profilePhoto">الصورة الشخصية</label>
-        <input type="file" id="profilePhoto" accept="image/*">
+        <input type="file" id="profilePhoto" accept="image/*" required>
 
         <label for="fullName">الاسم ثلاثي</label>
         <input id="fullName" type="text" placeholder="أحمد محمد أحمد" required>
@@ -42,54 +42,74 @@
         <label for="email">الايميل</label>
         <input id="email" type="email" placeholder="test.user@example.com" required>
 
-        <!-- وضعنا الزر داخل النموذج ليعمل التسجيل بشكل صحيح -->
         <button type="submit" id="submitBtn" style="margin-top: 20px; width: 100%; padding: 12px; cursor: pointer;">تسجيل الدخول</button>
       </form>
-
-      <div id="result" class="result" hidden></div>
     </section>
   </main>
 
   <script>
-    // ضع رابط الـ Connection URL المأخوذ من SheetBest بين التنصيص
-    const GOOGLE_SHEET_API_URL = "https://api.sheetbest.com/sheets/a08b3225-92a8-407f-8463-b6dfd60036fa";
+    // ضع هنا رابط Web app الذي نسخته من Apps Script
+    const SCRIPT_URL = "ضع_رابط_WEB_APP_هنا";
 
     document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
-      submitBtn.innerText = "جاري الإرسال...";
+      submitBtn.innerText = "جاري رفع البيانات والصورة...";
 
-      const formData = {
-        "الاسم ثلاثي": document.getElementById("fullName").value,
-        "السن": document.getElementById("age").value,
-        "الدولة": document.getElementById("country").value,
-        "المحافظة": document.getElementById("gov").value,
-        "العنوان التفصيلي": document.getElementById("address").value,
-        "الوظيفة": document.getElementById("job").value,
-        "الجنسية": document.getElementById("nationality").value,
-        "الايميل": document.getElementById("email").value
-      };
+      const fileInput = document.getElementById("profilePhoto");
+      const file = fileInput.files[0];
 
-      fetch(GOOGLE_SHEET_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify([formData])
-      })
-      .then(response => response.json())
-      .then(data => {
-        alert("تم إرسال البيانات وتسجيلها بنجاح!");
-        document.getElementById("loginForm").reset();
-      })
-      .catch(error => {
-        alert("حدث خطأ أثناء الإرسال، تأكد من رابط SheetBest والاتصال بالإنترنت.");
-        console.error("Error:", error);
-      })
-      .finally(() => {
+      if (!file) {
+        alert("يرجى اختيار صورة شخصية");
         submitBtn.disabled = false;
         submitBtn.innerText = "تسجيل الدخول";
-      });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const base64Data = event.target.result.split(',')[1];
+
+        const payload = {
+          fullName: document.getElementById("fullName").value,
+          age: document.getElementById("age").value,
+          country: document.getElementById("country").value,
+          gov: document.getElementById("gov").value,
+          address: document.getElementById("address").value,
+          job: document.getElementById("job").value,
+          nationality: document.getElementById("nationality").value,
+          email: document.getElementById("email").value,
+          fileName: file.name,
+          mimeType: file.type,
+          fileData: base64Data
+        };
+
+        fetch(https://script.google.com/macros/s/AKfycbzHZKIn35ObP72mM8MktILDOVWV8vAWUEIkaoNzCUji1xc2HBAr-0CArfMrLuKb50eT1A/exec, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.result === "success") {
+            alert("تم إرسال البيانات ورفع الصورة بنجاح!");
+            document.getElementById("loginForm").reset();
+          } else {
+            alert("حدث خطأ أثناء حفظ البيانات: " + data.error);
+          }
+        })
+        .catch(err => {
+          alert("حدث خطأ في الاتصال بالسيرفر.");
+          console.error(err);
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerText = "تسجيل الدخول";
+        });
+      };
+
+      reader.readAsDataURL(file);
     });
   </script>
 

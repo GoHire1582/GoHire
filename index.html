@@ -86,27 +86,26 @@
           fileData: base64Data
         };
 
-        fetch("https://script.google.com/macros/s/AKfycbzHZKIn350bP72mM8MktILDOVWV8vAWUElkaoNzCUji1xc2HBAr-0CArfMrLuKb50eT1A/exec", {
-  method: "POST",
-  body: JSON.stringify(payload)
-})
-        .then(res => res.json())
-        .then(data => {
-          if (data.result === "success") {
-            alert("تم إرسال البيانات ورفع الصورة بنجاح!");
-            document.getElementById("loginForm").reset();
-          } else {
-            alert("حدث خطأ أثناء حفظ البيانات: " + data.error);
-          }
-        })
-        .catch(err => {
-          alert("حدث خطأ في الاتصال بالسيرفر.");
-          console.error(err);
-        })
-        .finally(() => {
-          submitBtn.disabled = false;
-          submitBtn.innerText = "تسجيل الدخول";
-        });
+           fetch("https://script.google.com/macros/s/AKfycbzHZKIn350bP72mM8MktILDOVWV8vAWUElkaoNzCUji1xc2HBAr-0CArfMrLuKb50eT1A/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      alert("تم إرسال البيانات ورفع الصورة بنجاح!");
+      document.getElementById("loginForm").reset();
+    })
+    .catch(err => {
+      alert("حدث خطأ في الاتصال بالسيرفر.");
+      console.error(err);
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "تسجيل الدخول";
+    });
       };
 
       reader.readAsDataURL(file);

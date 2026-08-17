@@ -12,73 +12,76 @@
       <div class="logo">Go<span>Hire</span></div>
       <p>فرصتك للعمل بالخارج تبدأ من هنا نوفر لك فرص عمل مميزة في الخارج، مع دعمك في جميع خطوات التقديم والتوظيف وإجراءات السفر</p>
       <h1>تسجيل الدخول</h1>
+      
       <form id="loginForm" autocomplete="off">
         <label for="profilePhoto">الصورة الشخصية</label>
-        <input
-          type="file"
-          id="profilePhoto"
-          name="profilePhoto"
-          accept=".jpg,.jpeg,image/jpeg"
-        >
-        <label for="username">الاسم ثلاثي</label>
-        <input id="username" type="text" placeholder="أحمد محمد أحمد">
-        <label for="username">السن</label>
-        <input id="username" type="text" placeholder="18">
-        <label for="username">الدولة</label>
-        <input id="username" type="text" placeholder="مصر">
-        <label for="username">المحافظة</label>
-        <input id="username" type="text" placeholder="القاهرة">
-        <label for="username">العنوان التفصيلي</label>
-        <input id="username" type="text" placeholder="القاهرة - شارع .... - عمارة رقم..">
-        <label for="username">الوظيفة</label>
-        <input id="username" type="text" placeholder="عامل">
-        <label for="username">الجنسية</label>
-        <input id="username" type="text" placeholder="مصري">
-        <label for="password">الايميل</label>
-        <input id="text" type="text" placeholder="test.user@example.com">
+        <input type="file" id="profilePhoto" name="profilePhoto" accept=".jpg,.jpeg,image/jpeg">
+
+        <label for="fullName">الاسم ثلاثي</label>
+        <input id="fullName" name="fullName" type="text" placeholder="أحمد محمد أحمد" required>
+
+        <label for="age">السن</label>
+        <input id="age" name="age" type="number" placeholder="18" required>
+
+        <label for="country">الدولة</label>
+        <input id="country" name="country" type="text" placeholder="مصر" required>
+
+        <label for="gov">المحافظة</label>
+        <input id="gov" name="gov" type="text" placeholder="القاهرة" required>
+
+        <label for="address">العنوان التفصيلي</label>
+        <input id="address" name="address" type="text" placeholder="القاهرة - شارع .... - عمارة رقم.." required>
+
+        <label for="job">الوظيفة</label>
+        <input id="job" name="job" type="text" placeholder="عامل" required>
+
+        <label for="nationality">الجنسية</label>
+        <input id="nationality" name="nationality" type="text" placeholder="مصري" required>
+
+        <label for="email">الايميل</label>
+        <input id="email" name="email" type="email" placeholder="test.user@example.com" required>
+
+        <button type="submit" style="margin-top: 15px;">تسجيل الدخول</button>
       </form>
 
       <div id="result" class="result" hidden></div>
     </section>
-
   </main>
 
   <script>
-const form = document.querySelector("form");
+    // ضع رابط API الخاص بشيت جوجل هنا (مثل SheetBest أو Google Apps Script Web App)
+    const GOOGLE_SHEET_API_URL = "https://api.sheetbest.com/sheets/a08b3225-92a8-407f-8463-b6dfd60036fa";
 
-form.querySelectorAll("input, select, textarea").forEach(field => {
-  field.required = true;
-});
-</script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
 
-<script>
-function exportToExcel() {
-    const data = [
-        {
-          الصورة : document.getElementById("الاسم").value,
-          الاسم ثلاثي: document.getElementById("الاسم").value,
-          السن: document.getElementById("السن").value,
-          الدولة: document.getElementById("الدولة").value,
-          المحافظة: document.getElementById("المحافظة").value
-          العنوان بالتفصيل: document.getElementById("العنوان").value
-          الوظيفة: document.getElementById("الوظيفة").value
-          الجنسية: document.getElementById("الجنسية").value
-          الايميل: document.getElementById("الايميل").value
-        }
-    ];
+      const formData = {
+        "الاسم ثلاثي": document.getElementById("fullName").value,
+        "السن": document.getElementById("age").value,
+        "الدولة": document.getElementById("country").value,
+        "المحافظة": document.getElementById("gov").value,
+        "العنوان التفصيلي": document.getElementById("address").value,
+        "الوظيفة": document.getElementById("job").value,
+        "الجنسية": document.getElementById("nationality").value,
+        "الايميل": document.getElementById("email").value
+      };
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
+      // سطر إرسال البيانات مباشرة إلى Google Sheet
+      fetch(GOOGLE_SHEET_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([formData])
+      })
+      .then(response => {
+        alert("تم إرسال البيانات بنجاح إلى Google Sheets!");
+        document.getElementById("loginForm").reset();
+      })
+      .catch(error => {
+        alert("حدث خطأ أثناء الإرسال!");
+        console.error("Error:", error);
+      });
+    });
+  </script>
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "البيانات");
-
-    XLSX.writeFile(workbook, "");
-}
-</script>
-
-<button onclick="exportToExcel()">تسجيل الدخول 
-
-</button>
 </body>
 </html>

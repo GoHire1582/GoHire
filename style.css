@@ -18,6 +18,10 @@ body {
   border-bottom: 1px solid #ffe69c;
 }
 
+.description {
+  text-align: center;
+}
+
 .page {
   width: min(92%, 480px);
   margin: 45px auto;

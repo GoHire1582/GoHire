@@ -57,30 +57,30 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6PJD0FQ75E6obcQUOGoSVPgGRTR45ARTFfo7RPQIh7aZpt7g7pjDmuCg9zuL9XYohg/exec";
+    const form = document.getElementById("loginForm");
 
-    document.getElementById("loginForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
 
-      const submitBtn = document.getElementById("submitBtn");
-      submitBtn.disabled = true;
-      submitBtn.innerText = "جاري رفع البيانات والصورة...";
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.innerText = "جاري إرسال البيانات...";
 
-      const fileInput = document.getElementById("profilePhoto");
-      const file = fileInput.files[0];
+  const fileInput = document.getElementById("profilePhoto");
+  const file = fileInput.files[0];
 
-      if (!file) {
-        alert("يرجى اختيار صورة شخصية");
-        submitBtn.disabled = false;
-        submitBtn.innerText = "تسجيل الدخول";
-        return;
-      }
+  if (!file) {
+    alert("يرجى اختيار صورة شخصية");
+    submitBtn.disabled = false;
+    submitBtn.innerText = "تسجيل الدخول";
+    return;
+  }
 
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const base64Data = event.target.result.split(',')[1];
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const base64Data = event.target.result.split(',')[1];
 
-       const payload = {
+    const payload = {
       fullName: document.getElementById("fullName").value,
       nationalId: document.getElementById("nationalId").value,
       age: document.getElementById("age").value,
@@ -94,30 +94,31 @@
       mimeType: file.type,
       fileData: base64Data
     };
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        })
-        .then(() => {
-          alert("تم إرسال البيانات ورفع الصورة بنجاح!");
-          document.getElementById("loginForm").reset();
-        })
-        .catch(err => {
-          alert("حدث خطأ في الاتصال بالسيرفر.");
-          console.error(err);
-        })
-        .finally(() => {
-          submitBtn.disabled = false;
-          submitBtn.innerText = "تسجيل";
-        });
-      };
 
-      reader.readAsDataURL(file);
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      alert("تم التسجيل بنجاح وسيتم التواصل معكم قريباً!");
+      form.reset();
+    })
+    .catch(err => {
+      alert("حدث خطأ أثناء الإرسال");
+      console.error(err);
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "تسجيل الدخول";
     });
+  };
+
+  reader.readAsDataURL(file);
+});
   </script>
 
 </body>

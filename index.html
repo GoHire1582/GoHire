@@ -10,9 +10,12 @@
 
   <main class="page">
     <section class="card">
-      <div class="logo">Go<span>Hire</span></div>
+<div class="header-logo" style="text-align: center; margin-bottom: 15px;">
+    <img src="https://img.icons8.com/fluency/96/airplane-take-off.png" alt="GoHire Logo" style="width: 60px; height: 60px;">
+    <h1 style="color: #0d6efd; margin-top: 5px; font-weight: bold;">GoHire</h1>
+</div>
       <p>فرصتك للعمل بالخارج تبدأ من هنا نوفر لك فرص عمل مميزة في الخارج، مع دعمك في جميع خطوات التقديم والتوظيف وإجراءات السفر</p>
-      <h1>تسجيل الدخول</h1>
+      <h1>تسجيل</h1>
       
       <form id="loginForm" autocomplete="off">
         <label for="profilePhoto">الصورة الشخصية</label>
@@ -103,7 +106,7 @@
         })
         .finally(() => {
           submitBtn.disabled = false;
-          submitBtn.innerText = "تسجيل الدخول";
+          submitBtn.innerText = "تسجيل";
         });
       };
 

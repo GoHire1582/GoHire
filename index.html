@@ -57,68 +57,99 @@
   </main>
 
   <script>
-    const form = document.getElementById("loginForm");
+   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6PJD0FQ75E6obcQUOGoSVPgGRTR45ARTFfo7RPQIh7aZpt7g7pjDmuCg9zuL9XYohg/exec";
+
+const form = document.getElementById("loginForm");
+const submitBtn = document.getElementById("submitBtn");
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const submitBtn = document.getElementById("submitBtn");
+  // تغيير حالة الزر
   submitBtn.disabled = true;
   submitBtn.innerText = "جاري إرسال البيانات...";
+  color"blue";
 
-  const fileInput = document.getElementById("profilePhoto");
-  const file = fileInput.files[0];
+  try {
+    const fileInput = document.getElementById("profilePhoto");
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      alert("يرجى اختيار صورة شخصية أولاً");
+      resetButton();
+      return;
+    }
 
-  if (!file) {
-    alert("يرجى اختيار صورة شخصية");
-    submitBtn.disabled = false;
-    submitBtn.innerText = "تسجيل الدخول";
-    return;
-  }
+    const file = fileInput.files[0];
+    const reader = new FileReader();
 
-  const reader = new FileReader();
-  reader.onload = function (event) {
-    const base64Data = event.target.result.split(',')[1];
+    reader.onload = function (event) {
+      try {
+        const base64Data = event.target.result.split(',')[1];
 
-    const payload = {
-      fullName: document.getElementById("fullName").value,
-      nationalId: document.getElementById("nationalId").value,
-      age: document.getElementById("age").value,
-      country: document.getElementById("country").value,
-      gov: document.getElementById("gov").value,
-      address: document.getElementById("address").value,
-      job: document.getElementById("job").value,
-      nationality: document.getElementById("nationality").value,
-      email: document.getElementById("email").value,
-      fileName: file.name,
-      mimeType: file.type,
-      fileData: base64Data
+        // التأكد من وجود خانة الرقم القومي، ولو مش موجودة بياخد قيمة فارغة بدون توقف الكود
+        const nationalIdElem = document.getElementById("nationalId");
+        const nationalIdVal = nationalIdElem ? nationalIdElem.value : "";
+
+        const payload = {
+          fullName: document.getElementById("fullName") ? document.getElementById("fullName").value : "",
+          nationalId: nationalIdVal,
+          age: document.getElementById("age") ? document.getElementById("age").value : "",
+          country: document.getElementById("country") ? document.getElementById("country").value : "",
+          gov: document.getElementById("gov") ? document.getElementById("gov").value : "",
+          address: document.getElementById("address") ? document.getElementById("address").value : "",
+          job: document.getElementById("job") ? document.getElementById("job").value : "",
+          nationality: document.getElementById("nationality") ? document.getElementById("nationality").value : "",
+          email: document.getElementById("email") ? document.getElementById("email").value : "",
+          fileName: file.name,
+          mimeType: file.type,
+          fileData: base64Data
+        };
+
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        })
+        .then(() => {
+          alert("تم التسجيل بنجاح وسيتم التواصل معكم قريباً!");
+          form.reset();
+        })
+        .catch(err => {
+          alert("حدث خطأ أثناء الإرسال: " + err.message);
+          console.error(err);
+        })
+        .finally(() => {
+          resetButton();
+        });
+
+      } catch (err) {
+        alert("خطأ في قراءة البيانات: " + err.message);
+        console.error(err);
+        resetButton();
+      }
     };
 
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      alert("تم التسجيل بنجاح وسيتم التواصل معكم قريباً!");
-      form.reset();
-    })
-    .catch(err => {
-      alert("حدث خطأ أثناء الإرسال");
-      console.error(err);
-    })
-    .finally(() => {
-      submitBtn.disabled = false;
-      submitBtn.innerText = "تسجيل الدخول";
-    });
-  };
+    reader.onerror = function (error) {
+      alert("خطأ أثناء رفع الصورة");
+      console.error(error);
+      resetButton();
+    };
 
-  reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
+
+  } catch (err) {
+    alert("خطأ عام: " + err.message);
+    console.error(err);
+    resetButton();
+  }
 });
+
+function resetButton() {
+  submitBtn.disabled = false;
+  submitBtn.innerText = "تسجيل الدخول";
+}
   </script>
 
 </body>

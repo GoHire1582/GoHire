@@ -10,11 +10,11 @@
 
   <main class="page">
     <section class="card">
-<div class="logo-container" style="text-align: center; margin-bottom: 10px;">
-  <!-- صورة الطائرة فوق كلمة GoHire -->
-  <img src="https://img.icons8.com/fluency/96/airplane-take-off.png" alt="Airplane" style="width: 50px; height: 50px; display: block; margin: 0 auto 5px auto;">
-  <div class="logo">Go<span>Hire</span></div>
-</div>
+      <div class="logo-container" style="text-align: center; margin-bottom: 10px;">
+        <!-- صورة الطائرة فوق كلمة GoHire -->
+        <img src="https://img.icons8.com/fluency/96/airplane-take-off.png" alt="Airplane" style="width: 50px; height: 50px; display: block; margin: 0 auto 5px auto;">
+        <div class="logo">Go<span>Hire</span></div>
+      </div>
       <p>فرصتك للعمل بالخارج تبدأ من هنا نوفر لك فرص عمل مميزة في الخارج، مع دعمك في جميع خطوات التقديم والتوظيف وإجراءات السفر</p>
       <h1>تسجيل</h1>
       
@@ -28,10 +28,10 @@
         <label for="age">السن</label>
         <input id="age" type="text" placeholder="18" required>
 
-      <div class="input-group">
-        <label for="nationalId">الرقم القومي</label>
-        <input type="text" id="nationalId" name="nationalId" maxlength="14" placeholder="اكتب 14 رقم" required>
-      </div>
+        <div class="input-group">
+          <label for="nationalId">الرقم القومي</label>
+          <input type="text" id="nationalId" name="nationalId" maxlength="14" placeholder="اكتب 14 رقم" required>
+        </div>
 
         <label for="country">الدولة</label>
         <input id="country" type="text" placeholder="مصر" required>
@@ -51,105 +51,130 @@
         <label for="email">الايميل</label>
         <input id="email" type="email" placeholder="test.user@example.com" required>
 
-        <button type="submit" id="submitBtn" style="margin-top: 20px; width: 100%; padding: 12px; cursor: pointer;">تسجيل الدخول</button>
+        <button type="submit" id="submitBtn" style="margin-top: 20px; width: 100%; padding: 12px;">تسجيل الدخول</button>
       </form>
     </section>
   </main>
 
   <script>
-   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6PJD0FQ75E6obcQUOGoSVPgGRTR45ARTFfo7RPQIh7aZpt7g7pjDmuCg9zuL9XYohg/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzu6PJD0FQ75E6obcQUOGoSVPgGRTR45ARTFfo7RPQIh7aZpt7g7pjDmuCg9zuL9XYohg/exec";
 
-const form = document.getElementById("loginForm");
-const submitBtn = document.getElementById("submitBtn");
+    const form = document.getElementById("loginForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const requiredInputs = form.querySelectorAll("input[required]");
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+    // دالة للتحقق من ملء كافة الحقول وتفعيل الزر
+    function checkFormCompletion() {
+      let allFilled = true;
+      requiredInputs.forEach(input => {
+        if (input.type === "file") {
+          if (!input.files || input.files.length === 0) allFilled = false;
+        } else {
+          if (input.value.trim() === "") allFilled = false;
+        }
+      });
 
-  // تغيير حالة الزر
-  submitBtn.disabled = true;
-  submitBtn.innerText = "جاري إرسال البيانات...";
-  color"blue";
-
-  try {
-    const fileInput = document.getElementById("profilePhoto");
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-      alert("يرجى اختيار صورة شخصية أولاً");
-      resetButton();
-      return;
+      if (allFilled) {
+        submitBtn.disabled = false;
+        submitBtn.style.backgroundColor = "#0d6efd";
+        submitBtn.style.color = "#ffffff";
+        submitBtn.style.cursor = "pointer";
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.style.backgroundColor = "#ccc";
+        submitBtn.style.color = "#666";
+        submitBtn.style.cursor = "not-allowed";
+      }
     }
 
-    const file = fileInput.files[0];
-    const reader = new FileReader();
+    // تعطيل الزر أول ما الصفحة تفتح والتحقق عند الكتابة
+    checkFormCompletion();
+    form.addEventListener("input", checkFormCompletion);
+    form.addEventListener("change", checkFormCompletion);
 
-    reader.onload = function (event) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "جاري إرسال البيانات...";
+
       try {
-        const base64Data = event.target.result.split(',')[1];
+        const fileInput = document.getElementById("profilePhoto");
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+          alert("يرجى اختيار صورة شخصية أولاً");
+          resetButton();
+          return;
+        }
 
-        // التأكد من وجود خانة الرقم القومي، ولو مش موجودة بياخد قيمة فارغة بدون توقف الكود
-        const nationalIdElem = document.getElementById("nationalId");
-        const nationalIdVal = nationalIdElem ? nationalIdElem.value : "";
+        const file = fileInput.files[0];
+        const reader = new FileReader();
 
-        const payload = {
-          fullName: document.getElementById("fullName") ? document.getElementById("fullName").value : "",
-          nationalId: nationalIdVal,
-          age: document.getElementById("age") ? document.getElementById("age").value : "",
-          country: document.getElementById("country") ? document.getElementById("country").value : "",
-          gov: document.getElementById("gov") ? document.getElementById("gov").value : "",
-          address: document.getElementById("address") ? document.getElementById("address").value : "",
-          job: document.getElementById("job") ? document.getElementById("job").value : "",
-          nationality: document.getElementById("nationality") ? document.getElementById("nationality").value : "",
-          email: document.getElementById("email") ? document.getElementById("email").value : "",
-          fileName: file.name,
-          mimeType: file.type,
-          fileData: base64Data
+        reader.onload = function (event) {
+          try {
+            const base64Data = event.target.result.split(',')[1];
+
+            const payload = {
+              fullName: document.getElementById("fullName").value,
+              nationalId: document.getElementById("nationalId").value,
+              age: document.getElementById("age").value,
+              country: document.getElementById("country").value,
+              gov: document.getElementById("gov").value,
+              address: document.getElementById("address").value,
+              job: document.getElementById("job").value,
+              nationality: document.getElementById("nationality").value,
+              email: document.getElementById("email").value,
+              fileName: file.name,
+              mimeType: file.type,
+              fileData: base64Data
+            };
+
+            fetch(SCRIPT_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+              },
+              body: JSON.stringify(payload)
+            })
+            .then(() => {
+              alert("تم التسجيل بنجاح وسيتم التواصل معكم قريباً!");
+              form.reset();
+              checkFormCompletion();
+            })
+            .catch(err => {
+              alert("حدث خطأ أثناء الإرسال: " + err.message);
+              console.error(err);
+            })
+            .finally(() => {
+              resetButton();
+            });
+
+          } catch (err) {
+            alert("خطأ في قراءة البيانات: " + err.message);
+            console.error(err);
+            resetButton();
+          }
         };
 
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        })
-        .then(() => {
-          alert("تم التسجيل بنجاح وسيتم التواصل معكم قريباً!");
-          form.reset();
-        })
-        .catch(err => {
-          alert("حدث خطأ أثناء الإرسال: " + err.message);
-          console.error(err);
-        })
-        .finally(() => {
+        reader.onerror = function (error) {
+          alert("خطأ أثناء رفع الصورة");
+          console.error(error);
           resetButton();
-        });
+        };
+
+        reader.readAsDataURL(file);
 
       } catch (err) {
-        alert("خطأ في قراءة البيانات: " + err.message);
+        alert("خطأ عام: " + err.message);
         console.error(err);
         resetButton();
       }
-    };
+    });
 
-    reader.onerror = function (error) {
-      alert("خطأ أثناء رفع الصورة");
-      console.error(error);
-      resetButton();
-    };
-
-    reader.readAsDataURL(file);
-
-  } catch (err) {
-    alert("خطأ عام: " + err.message);
-    console.error(err);
-    resetButton();
-  }
-});
-
-function resetButton() {
-  submitBtn.disabled = false;
-  submitBtn.innerText = "تسجيل الدخول";
-}
+    function resetButton() {
+      submitBtn.innerText = "تسجيل الدخول";
+      checkFormCompletion();
+    }
   </script>
 
 </body>

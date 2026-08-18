@@ -1,10 +1,12 @@
 * { box-sizing: border-box; }
 
 body {
-  margin: 0;
-  font-family: Arial, Tahoma, sans-serif;
-  background: #f3f5f9;
-  color: #20242b;
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), 
+                url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=1920') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Cairo', sans-serif;
+    margin: 0;
+    padding: 20px 0;
 }
 
 .demo-banner {
@@ -21,11 +23,14 @@ body {
   margin: 45px auto;
 }
 
-.card, .tips {
-  background: #fff;
-  border-radius: 18px;
-  padding: 28px;
-  box-shadow: 0 10px 35px rgba(0,0,0,.08);
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 30px;
 }
 
 .logo {

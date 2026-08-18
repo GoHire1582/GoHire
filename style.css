@@ -36,6 +36,29 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
+/* حالة الزر وهو غير مكتمل البيانات (رمادي وغير مفعّل) */
+#submitBtn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #ccc; /* لون رمادي خفيف */
+  color: #666;
+  cursor: not-allowed;
+  transition: all 0.3s ease;
+}
+
+/* حالة الزر بعد ملء جميع الحقول (يتغير للون الأزرق ويعمل) */
+#submitBtn.active {
+  background-color: #0d6efd; /* لون أزرق مميز */
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
 .logo {
   font-size: 28px;
   font-weight: 800;

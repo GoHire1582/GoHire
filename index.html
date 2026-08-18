@@ -51,7 +51,7 @@
         <label for="email">الايميل</label>
         <input id="email" type="email" placeholder="test.user@example.com" required>
 
-        <button type="submit" id="submitBtn" style="margin-top: 20px; width: 100%; padding: 12px;">تسجيل الدخول</button>
+        <button type="submit" id="submitBtn" style="margin-top: 20px; width: 100%; padding: 12px; background-color: #0d6efd; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">تسجيل الدخول</button>
       </form>
     </section>
   </main>
@@ -61,119 +61,82 @@
 
     const form = document.getElementById("loginForm");
     const submitBtn = document.getElementById("submitBtn");
-    const requiredInputs = form.querySelectorAll("input[required]");
-
-    // دالة للتحقق من ملء كافة الحقول وتفعيل الزر
-    function checkFormCompletion() {
-      let allFilled = true;
-      requiredInputs.forEach(input => {
-        if (input.type === "file") {
-          if (!input.files || input.files.length === 0) allFilled = false;
-        } else {
-          if (input.value.trim() === "") allFilled = false;
-        }
-      });
-
-      if (allFilled) {
-        submitBtn.disabled = false;
-        submitBtn.style.backgroundColor = "#0d6efd";
-        submitBtn.style.color = "#ffffff";
-        submitBtn.style.cursor = "pointer";
-      } else {
-        submitBtn.disabled = true;
-        submitBtn.style.backgroundColor = "#ccc";
-        submitBtn.style.color = "#666";
-        submitBtn.style.cursor = "not-allowed";
-      }
-    }
-
-    // تعطيل الزر أول ما الصفحة تفتح والتحقق عند الكتابة
-    checkFormCompletion();
-    form.addEventListener("input", checkFormCompletion);
-    form.addEventListener("change", checkFormCompletion);
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
+      // تغيير حالة الزر أثناء الإرسال
       submitBtn.disabled = true;
       submitBtn.innerText = "جاري إرسال البيانات...";
 
-      try {
-        const fileInput = document.getElementById("profilePhoto");
-        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-          alert("يرجى اختيار صورة شخصية أولاً");
-          resetButton();
-          return;
-        }
-
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-          try {
-            const base64Data = event.target.result.split(',')[1];
-
-            const payload = {
-              fullName: document.getElementById("fullName").value,
-              nationalId: document.getElementById("nationalId").value,
-              age: document.getElementById("age").value,
-              country: document.getElementById("country").value,
-              gov: document.getElementById("gov").value,
-              address: document.getElementById("address").value,
-              job: document.getElementById("job").value,
-              nationality: document.getElementById("nationality").value,
-              email: document.getElementById("email").value,
-              fileName: file.name,
-              mimeType: file.type,
-              fileData: base64Data
-            };
-
-            fetch(SCRIPT_URL, {
-              method: "POST",
-              mode: "no-cors",
-              headers: {
-                "Content-Type": "text/plain;charset=utf-8"
-              },
-              body: JSON.stringify(payload)
-            })
-            .then(() => {
-              alert("تم التسجيل بنجاح وسيتم التواصل معكم قريباً!");
-              form.reset();
-              checkFormCompletion();
-            })
-            .catch(err => {
-              alert("حدث خطأ أثناء الإرسال: " + err.message);
-              console.error(err);
-            })
-            .finally(() => {
-              resetButton();
-            });
-
-          } catch (err) {
-            alert("خطأ في قراءة البيانات: " + err.message);
-            console.error(err);
-            resetButton();
-          }
-        };
-
-        reader.onerror = function (error) {
-          alert("خطأ أثناء رفع الصورة");
-          console.error(error);
-          resetButton();
-        };
-
-        reader.readAsDataURL(file);
-
-      } catch (err) {
-        alert("خطأ عام: " + err.message);
-        console.error(err);
+      const fileInput = document.getElementById("profilePhoto");
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        alert("يرجى اختيار صورة شخصية أولاً");
         resetButton();
+        return;
       }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        try {
+          const base64Data = event.target.result.split(',')[1];
+
+          const payload = {
+            fullName: document.getElementById("fullName").value,
+            nationalId: document.getElementById("nationalId").value,
+            age: document.getElementById("age").value,
+            country: document.getElementById("country").value,
+            gov: document.getElementById("gov").value,
+            address: document.getElementById("address").value,
+            job: document.getElementById("job").value,
+            nationality: document.getElementById("nationality").value,
+            email: document.getElementById("email").value,
+            fileName: file.name,
+            mimeType: file.type,
+            fileData: base64Data
+          };
+
+          fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(payload)
+          })
+          .then(() => {
+            alert("تم التسجيل بنجاح وسيتم التواصل معكم قريباً!");
+            form.reset();
+          })
+          .catch(err => {
+            alert("حدث خطأ أثناء الإرسال: " + err.message);
+            console.error(err);
+          })
+          .finally(() => {
+            resetButton();
+          });
+
+        } catch (err) {
+          alert("خطأ في قراءة البيانات: " + err.message);
+          console.error(err);
+          resetButton();
+        }
+      };
+
+      reader.onerror = function (error) {
+        alert("خطأ أثناء رفع الصورة");
+        console.error(error);
+        resetButton();
+      };
+
+      reader.readAsDataURL(file);
     });
 
     function resetButton() {
+      submitBtn.disabled = false;
       submitBtn.innerText = "تسجيل الدخول";
-      checkFormCompletion();
     }
   </script>
 

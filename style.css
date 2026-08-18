@@ -25,7 +25,7 @@ body {
 
 .card {
     /* جعل الكارت أكثر شفافية وتوضيح الخلفية خلفه */
-    background: rgba(255, 255, 255, 0.45); 
+    background: rgba(255, 255, 255, 0.25); 
     backdrop-filter: blur(15px); /* تأثير ضبابي جمالي خلف الكارت */
     -webkit-backdrop-filter: blur(15px);
     border-radius: 16px;
